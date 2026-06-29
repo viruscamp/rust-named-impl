@@ -6,6 +6,7 @@
 
 // https://internals.rust-lang.org/t/pre-rfc-forward-impls/4628/29
 // named impl base
+// likes `core::ops::Receiver`, can we use `Receiver`?
 pub trait NamedImplBase {
     type Target: ?Sized;
 }
