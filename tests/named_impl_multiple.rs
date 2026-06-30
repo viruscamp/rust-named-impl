@@ -12,10 +12,10 @@ use share::named_debug::*;
 use share::named_debug_impls::*;
 use type_tricks::is::Is;
 
-pub struct MultiplTraitImpl<T, N, D>
-(PhantomData<T>, PhantomData<N>, PhantomData<D>);
+pub struct MultipleImplSelector<T, N1, N2>
+(PhantomData<T>, PhantomData<N1>, PhantomData<N2>);
 
-impl<T, TS, D> NamedImplBase for MultiplTraitImpl<T, TS, D>
+impl<T, TS, D> NamedImplBase for MultipleImplSelector<T, TS, D>
 where
     TS: NamedToString,
     TS::Target: Is<Type = T>,
@@ -25,7 +25,7 @@ where
     type Target = T;
 }
 
-impl<'a, T, TS, D> ToString for WrapRef<'a, MultiplTraitImpl<T, TS, D>>
+impl<'a, T, TS, D> ToString for WrapRef<'a, MultipleImplSelector<T, TS, D>>
 where
     TS: NamedToString,
     TS::Target: Is<Type = T>,
@@ -39,7 +39,7 @@ where
     }
 }
 
-impl<'a, T, TS, D> Debug for WrapRef<'a, MultiplTraitImpl<T, TS, D>>
+impl<'a, T, TS, D> Debug for WrapRef<'a, MultipleImplSelector<T, TS, D>>
 where
     TS: NamedToString,
     TS::Target: Is<Type = T>,
@@ -57,15 +57,15 @@ where
 fn test_named_impl_multiple() {
     let num = 42;
 
-    let a1 = WrapRef::<MultiplTraitImpl::<i32, NamedToString1, NamedDebug1>>::from(&num);
+    let a1 = WrapRef::<MultipleImplSelector::<i32, NamedToString1, NamedDebug1>>::from(&num);
     assert_eq!(a1.to_string(), "NamedToString1");
     assert_eq!(format!("{a1:?}"), "NamedDebug1");
 
-    let a2 = WrapRef::<MultiplTraitImpl::<i32, NamedToStringProxy<i32>, NamedDebug1>>::from(&num);
+    let a2 = WrapRef::<MultipleImplSelector::<i32, NamedToStringProxy<i32>, NamedDebug1>>::from(&num);
     assert_eq!(a2.to_string(), "Pre 42 Post");
     assert_eq!(format!("{a2:?}"), "NamedDebug1");
 
-    let a3 = WrapRef::<MultiplTraitImpl::<i32, DefaultToString<i32>, NamedDebugProxy<i32>>>::from(&num);
+    let a3 = WrapRef::<MultipleImplSelector::<i32, DefaultToString<i32>, NamedDebugProxy<i32>>>::from(&num);
     assert_eq!(a3.to_string(), "42");
     assert_eq!(format!("{a3:?}"), "Debug Pre 42 Post");
 }
