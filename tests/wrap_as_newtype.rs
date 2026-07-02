@@ -1,11 +1,9 @@
 use core::fmt::{Debug, Formatter, Result};
 
-use type_tricks::{NamedImplBase, Wrap};
+use type_tricks::{NamedImplBase, Wrap, debug::NamedDebug};
 
 mod share;
 use share::named_debug_impls::NamedDebugProxy;
-
-use crate::share::named_debug::NamedDebug;
 
 struct WrapI32Tag;
 impl NamedImplBase for WrapI32Tag {
@@ -15,19 +13,19 @@ type WrapI32 = Wrap<WrapI32Tag>;
 
 impl ToString for WrapI32 {
     fn to_string(&self) -> String {
-        format!("WrapI32({})", self.value)
+        format!("WrapI32({})", self.0)
     }
 }
 
 impl Debug for WrapI32 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        NamedDebugProxy::fmt(&self.value, f)
+        NamedDebugProxy::fmt(&self.0, f)
     }
 }
 
 #[test]
 fn test_wrap_as_newtype() {
-    let wrap = WrapI32::from(42);
+    let wrap = WrapI32::new(42);
     assert_eq!(wrap.to_string(), "WrapI32(42)");
     assert_eq!(format!("{wrap:?}"), "Debug Pre 42 Post");
 }

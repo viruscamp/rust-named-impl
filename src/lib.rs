@@ -1,8 +1,10 @@
-#![no_std]
+//#![no_std]
 #![feature(fundamental)]
 #![feature(negative_impls)]
 #![feature(specialization)]
 #![feature(min_generic_const_args)]
+#![feature(fn_ptr_trait)]
+#![feature(with_negative_coherence)]
 
 // https://internals.rust-lang.org/t/pre-rfc-forward-impls/4628/29
 // named impl base
@@ -29,6 +31,8 @@ pub mod wrap_mut;
 pub mod is;
 pub mod is_type;
 pub mod is_copy;
+pub mod display;
+pub mod debug;
 
 pub use wrap::Wrap;
 pub use wrap_ref::WrapRef;

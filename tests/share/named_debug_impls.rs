@@ -2,8 +2,7 @@ use core::marker::PhantomData;
 use core::fmt::{Debug, Formatter, Result};
 
 use type_tricks::NamedImplBase;
-
-use super::named_debug::NamedDebug;
+use type_tricks::debug::NamedDebug;
 
 pub struct NamedDebug1;
 impl NamedImplBase for NamedDebug1 {

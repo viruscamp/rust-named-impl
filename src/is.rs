@@ -3,8 +3,8 @@ pub trait Is {
 
     fn into_val<X: Sized>(x: X) -> <X as Is>::Type;
     fn from_val<X: Sized>(t: <X as Is>::Type) -> X;
-    fn into_ref(&self) -> &Self::Type;
-    fn into_mut_ref(&mut self) -> &mut Self::Type;
+    fn to_ref(&self) -> &Self::Type;
+    fn to_mut_ref(&mut self) -> &mut Self::Type;
     fn from_ref(t: &Self::Type) -> &Self;
     fn from_mut_ref(t: &mut Self::Type) -> &mut Self;
 }
@@ -20,11 +20,11 @@ impl<T: ?Sized> Is for T {
         t
     }
 
-    fn into_ref(&self) -> &Self::Type {
+    fn to_ref(&self) -> &Self::Type {
         self
     }
 
-    fn into_mut_ref(&mut self) -> &mut Self::Type {
+    fn to_mut_ref(&mut self) -> &mut Self::Type {
         self
     }
 

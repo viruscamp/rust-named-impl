@@ -17,19 +17,12 @@ impl<T: ToString> NamedToString for DefaultToString<T> {
 }
 
 pub struct ToStringSelector<N: NamedToString>(PhantomData<N>);
-impl<N> NamedImplBase for ToStringSelector<N>
-where
-    N: NamedToString,
-{
+impl<N: NamedToString> NamedImplBase for ToStringSelector<N> {
     type Target = N::Target;
 }
 // Because we cannot write `impl<N: NamedToString> ToString for Wrap<N>`
-impl<N: NamedToString> ToString for Wrap<ToStringSelector<N>>
-where
-    N: NamedToString,
-    N::Target: Sized,
-{
+impl<N: NamedToString> ToString for Wrap<ToStringSelector<N>> {
     fn to_string(&self) -> String {
-        N::to_string(&self.value)
+        N::to_string(&self.0)
     }
 }

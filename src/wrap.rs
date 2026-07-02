@@ -1,83 +1,88 @@
-use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
 use core::convert::{AsMut, AsRef};
 
 //use core::borrow::{Borrow, BorrowMut};
 //use core::convert::From;
 
-use crate::NamedImplBase;
+use bytemuck::TransparentWrapper;
+
+use crate::{NamedImplBase};
 
 // newtype wrapper
 #[fundamental]
 #[repr(transparent)]
 #[derive(Clone, Copy)]
-pub struct Wrap<NamedImpl>
-where
-    NamedImpl: NamedImplBase,
-    NamedImpl::Target: Sized,
-{
-    pub value: NamedImpl::Target,
-    pub phantom: PhantomData<NamedImpl>,
-}
+pub struct Wrap<NamedImpl: NamedImplBase, const ImplDeref: bool = true>
+(pub NamedImpl::Target);
 
-impl<NamedImpl> !NamedImplBase for Wrap<NamedImpl> {}
-
-impl<NamedImpl> Wrap<NamedImpl>
-where
-    NamedImpl: NamedImplBase,
-    NamedImpl::Target: Sized,
+impl<NamedImpl: NamedImplBase, const ImplDeref: bool>
+Wrap<NamedImpl, ImplDeref>
 {
-    pub fn from(value: NamedImpl::Target) -> Self {
-        Wrap {
-            value,
-            phantom: PhantomData,
-        }
+    pub fn new(value: NamedImpl::Target) -> Self
+        where NamedImpl::Target: Sized
+    {
+        Wrap(value)
     }
 
-    pub fn into(self) -> NamedImpl::Target {
-        self.value
+    pub fn unwrap(self) -> NamedImpl::Target
+        where NamedImpl::Target: Sized
+    {
+        self.0
+    }
+
+    pub fn as_ref(&self) -> &NamedImpl::Target {
+        &self.0
+    }
+
+    pub fn as_mut(&mut self) -> &mut NamedImpl::Target {
+        &mut self.0
+    }
+
+    pub fn to_wrap_ref(&self) -> crate::WrapRef<'_, NamedImpl> {
+        crate::WrapRef::new(&self.0)
+    }
+
+    pub fn to_wrap_mut(&mut self) -> crate::WrapMut<'_, NamedImpl> {
+        crate::WrapMut::new(&mut self.0)
     }
 }
 
-impl<NamedImpl> Deref for Wrap<NamedImpl>
-where
-    NamedImpl: NamedImplBase,
-    NamedImpl::Target: Sized,
+unsafe impl<NamedImpl: NamedImplBase, const ImplDeref: bool> TransparentWrapper<NamedImpl::Target>
+for Wrap<NamedImpl, ImplDeref>
+{
+}
+
+impl<NamedImpl: NamedImplBase> Deref 
+    for Wrap<NamedImpl, true>
 {
     type Target = NamedImpl::Target;
 
     fn deref(&self) -> &NamedImpl::Target {
-        &self.value
+        &self.0
     }
 }
 
-impl<NamedImpl> DerefMut for Wrap<NamedImpl>
-where
-    NamedImpl: NamedImplBase,
-    NamedImpl::Target: Sized,
+impl<NamedImpl: NamedImplBase> DerefMut 
+    for Wrap<NamedImpl, true>
 {
     fn deref_mut(&mut self) -> &mut NamedImpl::Target {
-        &mut self.value
+        &mut self.0
     }
 }
 
-impl<NamedImpl> AsRef<NamedImpl::Target> for Wrap<NamedImpl>
-where
-    NamedImpl: NamedImplBase,
-    NamedImpl::Target: Sized,
+impl<NamedImpl: NamedImplBase, const ImplDeref: bool>
+    AsRef<NamedImpl::Target> for Wrap<NamedImpl, ImplDeref>
 {
     fn as_ref(&self) -> &NamedImpl::Target {
-        &self.value
+        &self.0
     }
 }
 
-impl<NamedImpl> AsMut<NamedImpl::Target> for Wrap<NamedImpl>
-where
-    NamedImpl: NamedImplBase,
-    NamedImpl::Target: Sized,
+impl<NamedImpl: NamedImplBase, const ImplDeref: bool>
+    AsMut<NamedImpl::Target> for Wrap<NamedImpl, ImplDeref>
 {
     fn as_mut(&mut self) -> &mut NamedImpl::Target {
-        &mut self.value
+        &mut self.0
     }
 }
 
