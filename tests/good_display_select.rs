@@ -5,6 +5,7 @@ mod share;
 
 use share::named_display_impls::*;
 
+/// use Wrap and a named impl directly
 #[test]
 fn test_named_display() {
     let wrap1 = Wrap::<NamedDisplay1>::new(123);

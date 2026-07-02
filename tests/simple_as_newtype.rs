@@ -13,12 +13,14 @@ impl NamedImplBase for WrapI32Tag {
 /// so Deref is disabled with ImplDeref=false
 type WrapI32 = Wrap<WrapI32Tag, false>;
 
+// impl trait directly
 impl ToString for WrapI32 {
     fn to_string(&self) -> String {
         format!("WrapI32({})", self.0)
     }
 }
 
+// impl trait by delegation to a named impl
 impl Debug for WrapI32 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         NamedDebugProxy::fmt(&self.0, f)
