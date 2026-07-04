@@ -6,16 +6,16 @@ use core::convert::{AsMut, AsRef};
 
 use bytemuck::TransparentWrapper;
 
-use crate::{NamedImplBase};
+use crate::ShadowTrait;
 
 // newtype wrapper
 #[fundamental]
 #[repr(transparent)]
 #[derive(Clone, Copy)]
-pub struct Wrap<NamedImpl: NamedImplBase, const ImplDeref: bool = true>
+pub struct Wrap<NamedImpl: ShadowTrait, const ImplDeref: bool = true>
 (pub NamedImpl::Target);
 
-impl<NamedImpl: NamedImplBase, const ImplDeref: bool>
+impl<NamedImpl: ShadowTrait, const ImplDeref: bool>
 Wrap<NamedImpl, ImplDeref>
 {
     pub fn new(value: NamedImpl::Target) -> Self
@@ -37,22 +37,14 @@ Wrap<NamedImpl, ImplDeref>
     pub fn as_mut(&mut self) -> &mut NamedImpl::Target {
         &mut self.0
     }
-
-    pub fn to_wrap_ref(&self) -> crate::WrapRef<'_, NamedImpl> {
-        crate::WrapRef::new(&self.0)
-    }
-
-    pub fn to_wrap_mut(&mut self) -> crate::WrapMut<'_, NamedImpl> {
-        crate::WrapMut::new(&mut self.0)
-    }
 }
 
-unsafe impl<NamedImpl: NamedImplBase, const ImplDeref: bool> TransparentWrapper<NamedImpl::Target>
+unsafe impl<NamedImpl: ShadowTrait, const ImplDeref: bool> TransparentWrapper<NamedImpl::Target>
 for Wrap<NamedImpl, ImplDeref>
 {
 }
 
-impl<NamedImpl: NamedImplBase> Deref 
+impl<NamedImpl: ShadowTrait> Deref 
     for Wrap<NamedImpl, true>
 {
     type Target = NamedImpl::Target;
@@ -62,7 +54,7 @@ impl<NamedImpl: NamedImplBase> Deref
     }
 }
 
-impl<NamedImpl: NamedImplBase> DerefMut 
+impl<NamedImpl: ShadowTrait> DerefMut 
     for Wrap<NamedImpl, true>
 {
     fn deref_mut(&mut self) -> &mut NamedImpl::Target {
@@ -70,16 +62,16 @@ impl<NamedImpl: NamedImplBase> DerefMut
     }
 }
 
-impl<NamedImpl: NamedImplBase, const ImplDeref: bool>
-    AsRef<NamedImpl::Target> for Wrap<NamedImpl, ImplDeref>
+impl<NamedImpl: ShadowTrait>
+    AsRef<NamedImpl::Target> for Wrap<NamedImpl, true>
 {
     fn as_ref(&self) -> &NamedImpl::Target {
         &self.0
     }
 }
 
-impl<NamedImpl: NamedImplBase, const ImplDeref: bool>
-    AsMut<NamedImpl::Target> for Wrap<NamedImpl, ImplDeref>
+impl<NamedImpl: ShadowTrait>
+    AsMut<NamedImpl::Target> for Wrap<NamedImpl, true>
 {
     fn as_mut(&mut self) -> &mut NamedImpl::Target {
         &mut self.0

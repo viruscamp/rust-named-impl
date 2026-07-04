@@ -1,24 +1,24 @@
 use core::marker::PhantomData;
 use core::fmt::{Debug, Formatter, Result};
 
-use type_tricks::NamedImplBase;
-use type_tricks::debug::NamedDebug;
+use type_tricks::ShadowTrait;
+use type_tricks::debug::ShadowDebug;
 
-pub struct NamedDebug1;
-impl NamedImplBase for NamedDebug1 {
+pub struct DebugImpl1;
+impl ShadowTrait for DebugImpl1 {
     type Target = i32;
 }
-impl NamedDebug for NamedDebug1 {
+impl ShadowDebug for DebugImpl1 {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result {
-        f.write_str("NamedDebug1")
+        f.write_str("DebugImpl1")
     }
 }
 
-pub struct NamedDebugProxy<T: Debug>(PhantomData<T>);
-impl<T: Debug> NamedImplBase for NamedDebugProxy<T> {
+pub struct DebugImplProxy<T: Debug>(PhantomData<T>);
+impl<T: Debug> ShadowTrait for DebugImplProxy<T> {
     type Target = T;
 }
-impl<T: Debug> NamedDebug for NamedDebugProxy<T> {
+impl<T: Debug> ShadowDebug for DebugImplProxy<T> {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result {
         f.write_str("Debug Pre ")?;
         this.fmt(f)?;

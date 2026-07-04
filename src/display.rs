@@ -1,33 +1,33 @@
-use crate::{NamedImplBase, is::Is};
+use crate::{ShadowTrait, is::Is};
 
 use core::fmt::{Display, Formatter, Result};
 use std::marker::PhantomData;
 
-pub trait NamedDisplay: NamedImplBase {
+pub trait ShadowDisplay: ShadowTrait {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result;
 }
 
-pub trait NamedDisplayProvider: NamedImplBase
-    where <Self::Impl as NamedImplBase>::Target: Is<Type = Self::Target>
+pub trait ShadowDisplayProvider: ShadowTrait
+    where <Self::Impl as ShadowTrait>::Target: Is<Type = Self::Target>
 {
-    type Impl: NamedDisplay;
+    type Impl: ShadowDisplay;
 }
 
-impl<N: NamedDisplay> NamedDisplayProvider for N {
+impl<N: ShadowDisplay> ShadowDisplayProvider for N {
     type Impl = Self;
 }
 
-impl<NP: NamedDisplayProvider, const ImplDeref: bool> Display for crate::Wrap<NP, ImplDeref> {
+impl<NP: ShadowDisplayProvider, const ImplDeref: bool> Display for crate::Wrap<NP, ImplDeref> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        NP::Impl::fmt(Is::from_ref(&self.0), f)
+        NP::Impl::fmt(Is::to_ref_left(&self.0), f)
     }
 }
 
 pub struct DefaultDisplay<T: Display>(PhantomData<T>);
-impl<T: Display> NamedImplBase for DefaultDisplay<T> {
+impl<T: Display> ShadowTrait for DefaultDisplay<T> {
     type Target = T;
 }
-impl<T: Display> NamedDisplay for DefaultDisplay<T> {
+impl<T: Display> ShadowDisplay for DefaultDisplay<T> {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result {
         <T as Display>::fmt(this, f)
     }

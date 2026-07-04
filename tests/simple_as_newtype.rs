@@ -1,10 +1,10 @@
-use type_tricks::{NamedImplBase, Wrap, debug::NamedDebugProvider};
+use type_tricks::{ShadowTrait, Wrap, debug::ShadowDebugProvider};
 
 mod share;
-use share::named_debug_impls::NamedDebugProxy;
+use share::shadow_debug_impls::DebugImplProxy;
 
 struct WrapI32Tag;
-impl NamedImplBase for WrapI32Tag {
+impl ShadowTrait for WrapI32Tag {
     type Target = i32;
 }
 /// For this type, I donot want it to be a transparent wrapper, 
@@ -19,8 +19,8 @@ impl ToString for WrapI32 {
 }
 
 // impl trait by delegation to a named impl
-impl NamedDebugProvider for WrapI32Tag {
-    type Impl = NamedDebugProxy<i32>;
+impl ShadowDebugProvider for WrapI32Tag {
+    type Impl = DebugImplProxy<i32>;
 }
 
 #[test]

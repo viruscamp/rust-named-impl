@@ -1,14 +1,14 @@
 use std::marker::PhantomData;
 
 use bytemuck::TransparentWrapper;
-use type_tricks::{NamedImplBase, Wrap, is::Is};
+use type_tricks::{ShadowTrait, Wrap, is::Is};
 
 pub trait UserSuper: Sync + Send + Copy {
     fn new() -> Self;
     fn consume(self);
 }
 
-pub trait NamedUserSuper: NamedImplBase
+pub trait NamedUserSuper: ShadowTrait
     where Self::Target : Sync + Send + Copy
 {
     fn new() -> Self::Target;
@@ -16,13 +16,13 @@ pub trait NamedUserSuper: NamedImplBase
 }
 
 pub trait NamedUserSuperProvider
-    where <Self::Impl as NamedImplBase>::Target: Sync + Send + Copy
+    where <Self::Impl as ShadowTrait>::Target: Sync + Send + Copy
 {
     type Impl: NamedUserSuper;
 }
 
 impl<N: NamedUserSuper> NamedUserSuperProvider for N
-    where <N as NamedImplBase>::Target: Sync + Send + Copy
+    where <N as ShadowTrait>::Target: Sync + Send + Copy
 {
     type Impl = Self;
 }
@@ -30,24 +30,24 @@ impl<N: NamedUserSuper> NamedUserSuperProvider for N
 impl<NP> UserSuper for Wrap<NP>
 where
     Self: Sync + Send + Copy,
-    NP: NamedImplBase + NamedUserSuperProvider,
+    NP: ShadowTrait + NamedUserSuperProvider,
     NP::Target: Sync + Send + Copy,
-    NP::Target: Is<Type = <NP::Impl as NamedImplBase>::Target>,
+    NP::Target: Is<Type = <NP::Impl as ShadowTrait>::Target>,
 {
     fn new() -> Self {
         let a = <NP::Impl as NamedUserSuper>::new();
-        let b: NP::Target = <NP::Target as Is>::from_val(a);
+        let b: NP::Target = <NP::Target as Is>::to_left(a);
         Wrap::new(b)
     }
 
     fn consume(self) {
-        let a = <NP::Target as Is>::into_val(self.0);
+        let a = <NP::Target as Is>::to_right(self.0);
         <NP::Impl as NamedUserSuper>::consume(a)
     }
 }
 
 pub struct DefaultUserSuper<T: UserSuper>(PhantomData<T>);
-impl<T: UserSuper> NamedImplBase for DefaultUserSuper<T> {
+impl<T: UserSuper> ShadowTrait for DefaultUserSuper<T> {
     type Target = T;
 }
 impl<T: UserSuper> NamedUserSuper for DefaultUserSuper<T> {
@@ -68,7 +68,7 @@ pub trait UserTrait : UserSuper {
     }
 }
 
-pub trait NamedUserTrait: NamedImplBase + NamedUserSuper
+pub trait NamedUserTrait: ShadowTrait + NamedUserSuper
     where Self::Target : Sync + Send + Copy
 {
     fn use_ref(this: &Self::Target);
@@ -79,13 +79,13 @@ pub trait NamedUserTrait: NamedImplBase + NamedUserSuper
 }
 
 pub trait NamedUserTraitProvider
-    where <Self::Impl as NamedImplBase>::Target: Sync + Send + Copy
+    where <Self::Impl as ShadowTrait>::Target: Sync + Send + Copy
 {
     type Impl: NamedUserTrait;
 }
 
 impl<N: NamedUserTrait> NamedUserTraitProvider for N
-    where <N as NamedImplBase>::Target: Sync + Send + Copy
+    where <N as ShadowTrait>::Target: Sync + Send + Copy
 {
     type Impl = Self;
 }
@@ -93,24 +93,24 @@ impl<N: NamedUserTrait> NamedUserTraitProvider for N
 impl<NP> UserTrait for Wrap<NP>
 where
     Self: Sync + Send + Copy + UserSuper,
-    NP: NamedImplBase + NamedUserTraitProvider,
+    NP: ShadowTrait + NamedUserTraitProvider,
     NP::Target: Sync + Send + Copy,
-    NP::Target: Is<Type = <NP::Impl as NamedImplBase>::Target>,
+    NP::Target: Is<Type = <NP::Impl as ShadowTrait>::Target>,
 {
     fn use_ref(&self) {
-        let a = <NP::Target as Is>::to_ref(&self.0);
+        let a = <NP::Target as Is>::to_ref_right(&self.0);
         <NP::Impl as NamedUserTrait>::use_ref(a)
     }
     
     fn return_ref() -> &'static Self {
         let a = <NP::Impl as NamedUserTrait>::return_ref();
-        let b = <NP::Target as Is>::from_ref(a);
+        let b = <NP::Target as Is>::to_ref_left(a);
         <Self as TransparentWrapper<_>>::wrap_ref(b)
     }
 }
 
 pub struct DefaultUserTrait<T: UserTrait>(PhantomData<T>);
-impl<T: UserTrait> NamedImplBase for DefaultUserTrait<T> {
+impl<T: UserTrait> ShadowTrait for DefaultUserTrait<T> {
     type Target = T;
 }
 impl<T: UserTrait> NamedUserSuper for DefaultUserTrait<T> {
