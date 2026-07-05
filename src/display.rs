@@ -1,7 +1,7 @@
 use crate::{ShadowTrait, is::Is};
 
 use core::fmt::{Display, Formatter, Result};
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 pub trait ShadowDisplay: ShadowTrait {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result;
@@ -23,11 +23,11 @@ impl<NP: ShadowDisplayProvider, const ImplDeref: bool> Display for crate::Wrap<N
     }
 }
 
-pub struct DefaultDisplay<T: Display>(PhantomData<T>);
-impl<T: Display> ShadowTrait for DefaultDisplay<T> {
+pub struct DefaultDisplay<T: Display + ?Sized>(PhantomData<T>);
+impl<T: Display + ?Sized> ShadowTrait for DefaultDisplay<T> {
     type Target = T;
 }
-impl<T: Display> ShadowDisplay for DefaultDisplay<T> {
+impl<T: Display + ?Sized> ShadowDisplay for DefaultDisplay<T> {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result {
         <T as Display>::fmt(this, f)
     }

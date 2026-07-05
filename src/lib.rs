@@ -1,4 +1,4 @@
-//#![no_std]
+#![no_std]
 #![feature(fundamental)]
 #![feature(with_negative_coherence)]
 

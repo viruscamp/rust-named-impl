@@ -1,7 +1,7 @@
 use crate::{ShadowTrait, is::Is};
 
 use core::fmt::{Debug, Formatter, Result};
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 pub trait ShadowDebug: ShadowTrait {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result;
@@ -24,11 +24,11 @@ impl<NP: ShadowDebugProvider, const ImplDeref: bool> Debug for crate::Wrap<NP, I
     }
 }
 
-pub struct DefaultDebug<T: Debug>(PhantomData<T>);
-impl<T: Debug> ShadowTrait for DefaultDebug<T> {
+pub struct DefaultDebug<T: Debug + ?Sized>(PhantomData<T>);
+impl<T: Debug + ?Sized> ShadowTrait for DefaultDebug<T> {
     type Target = T;
 }
-impl<T: Debug> ShadowDebug for DefaultDebug<T> {
+impl<T: Debug + ?Sized> ShadowDebug for DefaultDebug<T> {
     fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result {
         <T as Debug>::fmt(this, f)
     }
