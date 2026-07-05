@@ -12,15 +12,13 @@ use type_tricks::debug::{ShadowDebugProvider};
 
 pub struct SimpleMultipleTag;
 
-impl ShadowTrait for SimpleMultipleTag {
-    type Target = i32;
-}
+impl ShadowTrait<i32> for SimpleMultipleTag {}
 
-impl ShadowDisplayProvider for SimpleMultipleTag {
+impl ShadowDisplayProvider<i32> for SimpleMultipleTag {
     type Impl = DisplayImpl1;
 }
 
-impl ShadowDebugProvider for SimpleMultipleTag {
+impl ShadowDebugProvider<i32> for SimpleMultipleTag {
     type Impl = DebugImpl1;
 }
 
@@ -30,7 +28,7 @@ fn test_simple_multiple() {
 
     // note: to_string() calls Display, format!("{:?}") calls Debug
     
-    let a1 = Wrap::<SimpleMultipleTag>::wrap_ref(&num);
+    let a1 = Wrap::<i32, SimpleMultipleTag>::wrap_ref(&num);
     assert_eq!(a1.to_string(), "DisplayImpl1");
     assert_eq!(format!("{a1:?}"), "DebugImpl1");
 }

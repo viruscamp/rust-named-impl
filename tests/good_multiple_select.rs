@@ -12,37 +12,29 @@ use share::shadow_debug_impls::*;
 use type_tricks::display::DefaultDisplay;
 use type_tricks::display::{ShadowDisplay, ShadowDisplayProvider};
 use type_tricks::debug::{ShadowDebug, ShadowDebugProvider};
-use type_tricks::is::Is;
 
 pub struct MultipleImplSelector<T, N1, N2>
 (PhantomData<T>, PhantomData<N1>, PhantomData<N2>);
 
-impl<T, N1, N2> ShadowTrait for MultipleImplSelector<T, N1, N2>
+impl<T, N1, N2> ShadowTrait<T> for MultipleImplSelector<T, N1, N2>
 where
-    N1: ShadowDisplay,
-    N1::Target: Is<Type = T>,
-    N2: ShadowDebug,
-    N2::Target: Is<Type = T>,
+    N1: ShadowDisplay<T>,
+    N2: ShadowDebug<T>,
 {
-    type Target = T;
 }
 
-impl<'a, T, N1, N2> ShadowDisplayProvider for MultipleImplSelector<T, N1, N2>
+impl<T, N1, N2> ShadowDisplayProvider<T> for MultipleImplSelector<T, N1, N2>
 where
-    N1: ShadowDisplay,
-    N1::Target: Is<Type = T>,
-    N2: ShadowDebug,
-    N2::Target: Is<Type = T>,
+    N1: ShadowDisplay<T>,
+    N2: ShadowDebug<T>,
 {
     type Impl = N1;
 }
 
-impl<'a, T, N1, N2> ShadowDebugProvider for MultipleImplSelector<T, N1, N2>
+impl<T, N1, N2> ShadowDebugProvider<T> for MultipleImplSelector<T, N1, N2>
 where
-    N1: ShadowDisplay,
-    N1::Target: Is<Type = T>,
-    N2: ShadowDebug,
-    N2::Target: Is<Type = T>,
+    N1: ShadowDisplay<T>,
+    N2: ShadowDebug<T>,
 {
     type Impl = N2;
 }
@@ -53,15 +45,15 @@ fn test_named_impl_multiple() {
 
     // note: to_string() calls Display, format!("{:?}") calls Debug
     
-    let a1 = Wrap::<MultipleImplSelector::<i32, DisplayImpl1, DebugImpl1>>::wrap_ref(&num);
+    let a1 = Wrap::<i32,MultipleImplSelector::<i32, DisplayImpl1, DebugImpl1>>::wrap_ref(&num);
     assert_eq!(a1.to_string(), "DisplayImpl1");
     assert_eq!(format!("{a1:?}"), "DebugImpl1");
 
-    let a2 = Wrap::<MultipleImplSelector::<i32, DisplayImplProxy<i32>, DebugImpl1>>::wrap_ref(&num);
+    let a2 = Wrap::<i32,MultipleImplSelector::<i32, DisplayImplProxy<i32>, DebugImpl1>>::wrap_ref(&num);
     assert_eq!(a2.to_string(), "Display Pre 42 Post");
     assert_eq!(format!("{a2:?}"), "DebugImpl1");
 
-    let a3 = Wrap::<MultipleImplSelector::<i32, DefaultDisplay<i32>, DebugImplProxy<i32>>>::wrap_ref(&num);
+    let a3 = Wrap::<i32,MultipleImplSelector::<i32, DefaultDisplay<i32>, DebugImplProxy<i32>>>::wrap_ref(&num);
     assert_eq!(a3.to_string(), "42");
     assert_eq!(format!("{a3:?}"), "Debug Pre 42 Post");
 }

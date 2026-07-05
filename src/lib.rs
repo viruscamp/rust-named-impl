@@ -5,9 +5,7 @@
 // https://internals.rust-lang.org/t/pre-rfc-forward-impls/4628/29
 // named impl base
 // likes `core::ops::Receiver`, can we use `Receiver`?
-pub trait ShadowTrait {
-    type Target: ?Sized;
-}
+pub trait ShadowTrait<T: ?Sized> {}
 
 pub mod wrap;
 pub mod is;

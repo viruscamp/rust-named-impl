@@ -5,21 +5,17 @@ use type_tricks::ShadowTrait;
 use type_tricks::display::ShadowDisplay;
 
 pub struct DisplayImpl1;
-impl ShadowTrait for DisplayImpl1 {
-    type Target = i32;
-}
-impl ShadowDisplay for DisplayImpl1 {
-    fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result {
+impl ShadowTrait<i32> for DisplayImpl1 {}
+impl ShadowDisplay<i32> for DisplayImpl1 {
+    fn fmt(this: &i32, f: &mut Formatter<'_>) -> Result {
         f.write_str("DisplayImpl1")
     }
 }
 
-pub struct DisplayImplProxy<T: Display>(PhantomData<T>);
-impl<T: Display> ShadowTrait for DisplayImplProxy<T> {
-    type Target = T;
-}
-impl<T: Display> ShadowDisplay for DisplayImplProxy<T> {
-    fn fmt(this: &Self::Target, f: &mut Formatter<'_>) -> Result {
+pub struct DisplayImplProxy<T: Display + ?Sized>(PhantomData<T>);
+impl<T: Display + ?Sized> ShadowTrait<T> for DisplayImplProxy<T> {}
+impl<T: Display + ?Sized> ShadowDisplay<T> for DisplayImplProxy<T> {
+    fn fmt(this: &T, f: &mut Formatter<'_>) -> Result {
         f.write_str("Display Pre ")?;
         this.fmt(f)?;
         f.write_str(" Post")?;

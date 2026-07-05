@@ -1,5 +1,6 @@
 use core::ops::{Deref, DerefMut};
 use core::convert::{AsMut, AsRef};
+use core::marker::PhantomData;
 
 //use core::borrow::{Borrow, BorrowMut};
 //use core::convert::From;
@@ -9,83 +10,93 @@ use bytemuck::TransparentWrapper;
 use crate::ShadowTrait;
 
 // newtype wrapper
-#[fundamental]
+//#[fundamental]
 #[repr(transparent)]
-#[derive(Clone, Copy)]
-pub struct Wrap<NamedImpl: ShadowTrait, const ImplDeref: bool = true>
-(pub NamedImpl::Target);
+pub struct Wrap<T: ?Sized, N: ShadowTrait<T>, const ImplDeref: bool = true>
+(PhantomData<N>, pub T);
 
-impl<NamedImpl: ShadowTrait, const ImplDeref: bool>
-Wrap<NamedImpl, ImplDeref>
+impl<T: Copy + ?Sized, N: ShadowTrait<T>, const ImplDeref: bool>
+Clone for Wrap<T, N, ImplDeref> {
+    fn clone(&self) -> Self {
+        Wrap(PhantomData, self.1)
+    }
+}
+
+impl<T: Copy + ?Sized, N: ShadowTrait<T>, const ImplDeref: bool>
+Copy for Wrap<T, N, ImplDeref> {}
+
+impl<T: ?Sized, N: ShadowTrait<T>, const ImplDeref: bool>
+Wrap<T, N, ImplDeref>
 {
-    pub fn new(value: NamedImpl::Target) -> Self
-        where NamedImpl::Target: Sized
+    pub fn new(value: T) -> Self
+        where T: Sized
     {
-        Wrap(value)
+        Wrap(PhantomData, value)
     }
 
-    pub fn unwrap(self) -> NamedImpl::Target
-        where NamedImpl::Target: Sized
+    pub fn unwrap(self) -> T
+        where T: Sized
     {
-        self.0
+        self.1
     }
 
-    pub fn as_ref(&self) -> &NamedImpl::Target {
-        &self.0
+    pub fn as_ref(&self) -> &T {
+        &self.1
     }
 
-    pub fn as_mut(&mut self) -> &mut NamedImpl::Target {
-        &mut self.0
+    pub fn as_mut(&mut self) -> &mut T {
+        &mut self.1
     }
 }
 
-unsafe impl<NamedImpl: ShadowTrait, const ImplDeref: bool> TransparentWrapper<NamedImpl::Target>
-for Wrap<NamedImpl, ImplDeref>
+unsafe impl<T: ?Sized, N: ShadowTrait<T>, const ImplDeref: bool>
+TransparentWrapper<T>
+for Wrap<T, N, ImplDeref>
 {
 }
 
-impl<NamedImpl: ShadowTrait> Deref 
-    for Wrap<NamedImpl, true>
+impl<T: ?Sized, N: ShadowTrait<T>> Deref 
+    for Wrap<T, N, true>
 {
-    type Target = NamedImpl::Target;
+    type Target = T;
 
-    fn deref(&self) -> &NamedImpl::Target {
-        &self.0
+    fn deref(&self) -> &T {
+        &self.1
     }
 }
 
-impl<NamedImpl: ShadowTrait> DerefMut 
-    for Wrap<NamedImpl, true>
+impl<T: ?Sized, N: ShadowTrait<T>> DerefMut 
+    for Wrap<T, N, true>
 {
-    fn deref_mut(&mut self) -> &mut NamedImpl::Target {
-        &mut self.0
+    fn deref_mut(&mut self) -> &mut T {
+        &mut self.1
     }
 }
 
-impl<NamedImpl: ShadowTrait>
-    AsRef<NamedImpl::Target> for Wrap<NamedImpl, true>
+impl<T: ?Sized, N: ShadowTrait<T>>
+    AsRef<T> for Wrap<T, N, true>
 {
-    fn as_ref(&self) -> &NamedImpl::Target {
-        &self.0
+    fn as_ref(&self) -> &T {
+        &self.1
     }
 }
 
-impl<NamedImpl: ShadowTrait>
-    AsMut<NamedImpl::Target> for Wrap<NamedImpl, true>
+impl<T: ?Sized, N: ShadowTrait<T>>
+    AsMut<T> for Wrap<T, N, true>
 {
-    fn as_mut(&mut self) -> &mut NamedImpl::Target {
-        &mut self.0
+    fn as_mut(&mut self) -> &mut T {
+        &mut self.1
     }
 }
 
-// how can i prove that Wrap<NamedImpl> != NamedImpl::Target?
+// how can i prove that Wrap<N> != N::Target?
 
 // confilict with impl<T> From<T> for T
 // confilict with impl<T> From<NonZero<T>> for T where T: ZeroablePrimitive
-// impl<NamedImpl> From<NamedImpl::Target> for Wrap<NamedImpl> 
+// impl<N> From<N::Target> for Wrap<N> 
 
 // confilict with impl<T> Borrow<T> for T
-// impl<NamedImpl> core::borrow::Borrow<NamedImpl::Target> for Wrap<NamedImpl>
+// impl<N> core::borrow::Borrow<N::Target> for Wrap<N>
 
 // confilict with impl<T> BorrowMut<T> for T
-// impl<NamedImpl> BorrowMut<NamedImpl::Target> for Wrap<NamedImpl>
+// impl<N> BorrowMut<N::Target> for Wrap<N>
