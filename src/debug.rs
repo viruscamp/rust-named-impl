@@ -6,9 +6,9 @@ use core::marker::PhantomData;
 
 pub trait DebugProvider: ShadowTrait
 where
+    Named<Self::Impl>: Debug,
     Self::Impl: ShadowTrait,
     Self::Target: Is<Type = <Self::Impl as ShadowTrait>::Target>,
-    Named<Self::Impl>: Debug
 {
     type Impl;
 }
@@ -24,9 +24,9 @@ where
 impl<NP, const ImplDeref: bool> Debug for Wrap<NP, ImplDeref>
 where
     NP: DebugProvider,
+    Named<NP::Impl>: Debug,
     NP::Impl: ShadowTrait,
     NP::Target: Is<Type = <NP::Impl as ShadowTrait>::Target>,
-    Named<NP::Impl>: Debug
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let a = &self.0;

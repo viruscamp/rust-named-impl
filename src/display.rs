@@ -6,9 +6,9 @@ use core::marker::PhantomData;
 
 pub trait DisplayProvider: ShadowTrait
 where
+    Named<Self::Impl>: Display,
     Self::Impl: ShadowTrait,
     Self::Target: Is<Type = <Self::Impl as ShadowTrait>::Target>,
-    Named<Self::Impl>: Display
 {
     type Impl;
 }
@@ -24,9 +24,9 @@ where
 impl<NP, const ImplDeref: bool> Display for Wrap<NP, ImplDeref>
 where
     NP: DisplayProvider,
+    Named<NP::Impl>: Display,
     NP::Impl: ShadowTrait,
     NP::Target: Is<Type = <NP::Impl as ShadowTrait>::Target>,
-    Named<NP::Impl>: Display
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let a = &self.0;
