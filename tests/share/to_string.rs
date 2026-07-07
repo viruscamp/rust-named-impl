@@ -12,6 +12,26 @@ impl<T: ToString> ToString for Named<DefaultToString<T>> {
     }
 }
 
+// this is useless, becasue we cannot use it in external crate
+pub trait ToStringProvider: ShadowTrait
+where
+    Named<Self::Impl>: ToString,
+    Self::Impl: ShadowTrait<Target = Self::Target>,
+{
+    type Impl;
+}
+
+impl<N> ToStringProvider for N
+where
+    Named<N>: ToString,
+    N: ShadowTrait,
+{
+    type Impl = Self;
+}
+
+// failed
+//impl<NP: ToStringProvider, const ImplDeref: bool> ToString for Wrap<NP, ImplDeref>{}
+
 pub struct ToStringSelector<N>(PhantomData<N>)
 where N: ShadowTrait, Named<N>: ToString;
 impl<N> ShadowTrait for ToStringSelector<N>
@@ -19,7 +39,7 @@ where N: ShadowTrait, Named<N>: ToString
 {
     type Target = N::Target;
 }
-// Because we cannot write `impl<N: ShadowToString> ToString for Wrap<N>`
+// Because we cannot write `impl<N> ToString for Wrap<N>`
 impl<N> ToString for Wrap<ToStringSelector<N>>
 where N: ShadowTrait, Named<N>: ToString
 {
@@ -27,3 +47,6 @@ where N: ShadowTrait, Named<N>: ToString
         Named::to_string(Named::wrap_ref(&self.0))
     }
 }
+
+// failed
+//impl<T, NP> ToString for shadow_traits::wrap1::Wrap1<T, NP> {}
