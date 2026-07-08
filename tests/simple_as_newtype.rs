@@ -1,4 +1,4 @@
-use shadow_traits::{ShadowTrait, Wrap, debug::DebugProvider};
+use named_impl::{ShadowTrait, Wrap, debug::DebugProvider};
 
 mod share;
 use share::named_debug_impls::DebugImplProxy;

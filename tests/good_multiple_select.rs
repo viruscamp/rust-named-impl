@@ -2,18 +2,18 @@ use core::marker::PhantomData;
 use std::fmt::{Debug,Display};
 
 use bytemuck::TransparentWrapper;
-use shadow_traits::Named;
-use shadow_traits::ShadowTrait;
-use shadow_traits::Wrap;
+use named_impl::Named;
+use named_impl::ShadowTrait;
+use named_impl::Wrap;
 
 mod share;
 
 use share::named_display_impls::*;
 use share::named_debug_impls::*;
 
-use shadow_traits::display::DefaultDisplay;
-use shadow_traits::display::DisplayProvider;
-use shadow_traits::debug::DebugProvider;
+use named_impl::display::DefaultDisplay;
+use named_impl::display::DisplayProvider;
+use named_impl::debug::DebugProvider;
 
 pub struct MultipleImplSelector<T, N1, N2>
 (PhantomData<T>, PhantomData<N1>, PhantomData<N2>);

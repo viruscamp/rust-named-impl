@@ -1,4 +1,4 @@
-use crate::{ShadowTrait, Named, Wrap, wrap1::Wrap1};
+use crate::{ShadowTrait, Named, Wrap, wrap_one_tag_multiple_types::WrapOneTagMultipleTypes};
 
 use bytemuck::TransparentWrapper;
 use core::fmt::{Display, Formatter, Result};
@@ -31,6 +31,7 @@ where
     }
 }
 
+#[fundamental]
 pub trait DisplayProvider1<T>
 where
     T: ?Sized,
@@ -49,7 +50,7 @@ where
     type Impl = Self;
 }
 
-impl<T, NP> Display for Wrap1<T, NP>
+impl<T, NP> Display for WrapOneTagMultipleTypes<T, NP>
 where
     T: ?Sized,
     NP: DisplayProvider1<T>,

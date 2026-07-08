@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 use bytemuck::TransparentWrapper;
-use shadow_traits::{Named, ShadowTrait, Wrap};
+use named_impl::{Named, ShadowTrait, Wrap};
 
 pub struct DefaultToString<T: ToString>(PhantomData<T>);
 impl<T: ToString> ShadowTrait for DefaultToString<T> {
@@ -44,9 +44,9 @@ impl<N> ToString for Wrap<ToStringSelector<N>>
 where N: ShadowTrait, Named<N>: ToString
 {
     fn to_string(&self) -> String {
-        Named::to_string(Named::wrap_ref(&self.0))
+        Named::<N>::to_string(Named::<N>::wrap_ref(&self.0))
     }
 }
 
 // failed
-//impl<T, NP> ToString for shadow_traits::wrap1::Wrap1<T, NP> {}
+//impl<T, NP> ToString for named_impl::wrap1::Wrap1<T, NP> {}

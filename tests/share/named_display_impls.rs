@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 use core::fmt::{Display, Formatter, Result};
 
-use shadow_traits::{Named, ShadowTrait};
+use named_impl::{Named, ShadowTrait};
 
 pub struct DisplayImpl1;
 impl ShadowTrait for DisplayImpl1 {

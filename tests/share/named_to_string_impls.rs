@@ -1,6 +1,6 @@
 use core::marker::PhantomData;
 
-use shadow_traits::{Named, ShadowTrait};
+use named_impl::{Named, ShadowTrait};
 
 pub struct ToStringImpl1;
 impl ShadowTrait for ToStringImpl1 {

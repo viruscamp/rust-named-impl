@@ -2,8 +2,8 @@ use core::marker::PhantomData;
 use core::fmt::{Debug, Formatter, Result};
 
 use bytemuck::TransparentWrapper;
-use shadow_traits::wrap::Wrap;
-use shadow_traits::{Named, ShadowTrait};
+use named_impl::wrap::Wrap;
+use named_impl::{Named, ShadowTrait};
 
 mod share;
 

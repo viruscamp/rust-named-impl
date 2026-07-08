@@ -1,5 +1,5 @@
 use bytemuck::TransparentWrapper;
-use shadow_traits::Wrap;
+use named_impl::Wrap;
 
 mod share;
 

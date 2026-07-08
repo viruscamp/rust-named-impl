@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub mod to_string;
 pub mod named_to_string_impls;
 

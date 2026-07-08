@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use bytemuck::TransparentWrapper;
-use shadow_traits::{Named, ShadowTrait, Wrap};
+use named_impl::{Named, ShadowTrait, Wrap};
 
 pub trait UserSuper: Sync + Send + Copy {
     fn new() -> Self;

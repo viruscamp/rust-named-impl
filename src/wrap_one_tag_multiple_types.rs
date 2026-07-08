@@ -12,14 +12,14 @@ use bytemuck::TransparentWrapper;
 /// As `#[fundamental]` on `Wrap<T, N>` with more than one generic paraments is invalid.  
 #[fundamental]
 #[repr(transparent)]
-pub struct Wrap1<T: ?Sized, N>(PhantomData<N>, pub T);
+pub struct WrapOneTagMultipleTypes<T: ?Sized, NP>(PhantomData<NP>, pub T);
 
-impl<T: Copy + ?Sized, N> Clone for Wrap1<T, N> {
+impl<T: Copy + ?Sized, NP> Clone for WrapOneTagMultipleTypes<T, NP> {
     fn clone(&self) -> Self {
         Self(PhantomData, self.1)
     }
 }
 
-impl<T: Copy + ?Sized, N> Copy for Wrap1<T, N> {}
+impl<T: Copy + ?Sized, NP> Copy for WrapOneTagMultipleTypes<T, NP> {}
 
-unsafe impl<T: ?Sized, N> TransparentWrapper<T> for Wrap1<T, N> {}
+unsafe impl<T: ?Sized, NP> TransparentWrapper<T> for WrapOneTagMultipleTypes<T, NP> {}

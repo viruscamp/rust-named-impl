@@ -1,7 +1,7 @@
 use core::marker::PhantomData;
 use core::fmt::{Debug, Formatter, Result};
 
-use shadow_traits::{Named, ShadowTrait};
+use named_impl::{Named, ShadowTrait};
 
 pub struct DebugImpl1;
 impl ShadowTrait for DebugImpl1 {

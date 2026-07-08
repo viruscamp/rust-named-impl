@@ -1,14 +1,14 @@
 use bytemuck::TransparentWrapper;
-use shadow_traits::ShadowTrait;
-use shadow_traits::Wrap;
+use named_impl::ShadowTrait;
+use named_impl::Wrap;
 
 mod share;
 
 use share::named_display_impls::*;
 use share::named_debug_impls::*;
 
-use shadow_traits::display::{DisplayProvider};
-use shadow_traits::debug::{DebugProvider};
+use named_impl::display::{DisplayProvider};
+use named_impl::debug::{DebugProvider};
 
 pub struct SimpleMultipleTag;
 

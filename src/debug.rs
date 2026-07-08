@@ -1,4 +1,4 @@
-use crate::{ShadowTrait, Named, Wrap, wrap1::Wrap1};
+use crate::{ShadowTrait, Named, Wrap, wrap_one_tag_multiple_types::WrapOneTagMultipleTypes};
 
 use bytemuck::TransparentWrapper;
 use core::fmt::{Debug, Formatter, Result};
@@ -49,7 +49,7 @@ where
     type Impl = Self;
 }
 
-impl<T, NP> Debug for Wrap1<T, NP>
+impl<T, NP> Debug for WrapOneTagMultipleTypes<T, NP>
 where
     T: ?Sized,
     NP: DebugProvider1<T>,

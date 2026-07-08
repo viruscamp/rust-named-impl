@@ -36,7 +36,7 @@ where
 }
 
 pub mod wrap;
-pub mod wrap1;
+pub mod wrap_one_tag_multiple_types;
 pub mod is;
 pub mod display;
 pub mod debug;
