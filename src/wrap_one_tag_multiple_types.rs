@@ -1,8 +1,5 @@
 use core::marker::PhantomData;
 
-//use core::borrow::{Borrow, BorrowMut};
-//use core::convert::From;
-
 use bytemuck::TransparentWrapper;
 
 /// It tries to make the Tag `N` to hold named-impls for different types.  
@@ -13,6 +10,16 @@ use bytemuck::TransparentWrapper;
 #[repr(transparent)]
 pub struct WrapOneTagMultipleTypes<T: ?Sized, NP>(PhantomData<NP>, pub T);
 
+impl<T: ?Sized, NP> WrapOneTagMultipleTypes<T, NP> {
+    pub fn new(value: T) -> Self
+        where T: Sized,
+    {
+        Self(PhantomData, value)
+    }
+}
+
+unsafe impl<T: ?Sized, NP> TransparentWrapper<T> for WrapOneTagMultipleTypes<T, NP> {}
+
 impl<T: Copy + ?Sized, NP> Clone for WrapOneTagMultipleTypes<T, NP> {
     fn clone(&self) -> Self {
         Self(PhantomData, self.1)
@@ -20,5 +27,3 @@ impl<T: Copy + ?Sized, NP> Clone for WrapOneTagMultipleTypes<T, NP> {
 }
 
 impl<T: Copy + ?Sized, NP> Copy for WrapOneTagMultipleTypes<T, NP> {}
-
-unsafe impl<T: ?Sized, NP> TransparentWrapper<T> for WrapOneTagMultipleTypes<T, NP> {}

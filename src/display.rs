@@ -27,7 +27,7 @@ where
     NP::Impl: ShadowTrait<Target = NP::Target>,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        Named::fmt(Named::wrap_ref(&self.0), f)
+        Named::<NP::Impl>::fmt(Named::<NP::Impl>::wrap_ref(&self.0), f)
     }
 }
 
@@ -57,7 +57,7 @@ where
     Named<NP::Impl>: Display,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        Named::fmt(Named::wrap_ref(&self.1), f)
+        Named::<NP::Impl>::fmt(Named::<NP::Impl>::wrap_ref(&self.1), f)
     }
 }
 

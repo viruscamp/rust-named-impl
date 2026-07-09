@@ -32,11 +32,11 @@ where
     NP::Target: Sync + Send + Copy,
 {
     fn new() -> Self {
-        Wrap::new(Named::new().0)
+        Wrap::<NP, IMPL_DEREF>::wrap(<Named::<NP::Impl> as UserSuper>::new().0)
     }
 
     fn consume(self) {
-        Named::consume(Named::wrap(self.0))
+        Named::<NP::Impl>::consume(Named::<NP::Impl>::wrap(self.0))
     }
 }
 
@@ -46,7 +46,7 @@ impl<T: UserSuper> ShadowTrait for DefaultUserSuper<T> {
 }
 impl<T: UserSuper> UserSuper for Named<DefaultUserSuper<T>> {
     fn new() -> Self {
-        Named::wrap(T::new())
+        Self::wrap(T::new())
     }
 
     fn consume(self) {
@@ -57,7 +57,7 @@ impl<T: UserSuper> UserSuper for Named<DefaultUserSuper<T>> {
 pub trait UserTrait : UserSuper {
     fn use_ref(&self);
     fn return_ref() -> &'static Self {
-        let b = Box::new(Self::new());
+        let b = Box::<Self>::new(Self::new());
         Box::leak(b)
     }
 }
@@ -87,12 +87,12 @@ where
     NP::Target: Sync + Send + Copy,
 {
     fn use_ref(&self) {
-        let c = Named::wrap_ref(&self.0);
-        Named::use_ref(c)
+        let c = Named::<NP::Impl>::wrap_ref(&self.0);
+        Named::<NP::Impl>::use_ref(c)
     }
     
     fn return_ref() -> &'static Self {
-        let a = Named::return_ref();
+        let a = Named::<NP::Impl>::return_ref();
         let b = &a.0;
         Self::wrap_ref(b)
     }
@@ -113,6 +113,6 @@ impl<T: UserTrait> UserTrait for Named<DefaultUserTrait<T>>
     }
 
     fn return_ref() -> &'static Self {
-        Named::wrap_ref(T::return_ref())
+        Self::wrap_ref(T::return_ref())
     }
 }

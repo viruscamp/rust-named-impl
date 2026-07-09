@@ -27,10 +27,8 @@ impl DebugProvider for SimpleMultipleTag {
 #[test]
 fn test_simple_multiple() {
     let num = 42;
-
-    // note: to_string() calls Display, format!("{:?}") calls Debug
     
     let a1 = Wrap::<SimpleMultipleTag>::wrap_ref(&num);
-    assert_eq!(a1.to_string(), "DisplayImpl1");
+    assert_eq!(format!("{a1}"), "DisplayImpl1");
     assert_eq!(format!("{a1:?}"), "DebugImpl1");
 }

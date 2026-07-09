@@ -13,18 +13,27 @@ pub trait ShadowTrait {
 #[repr(transparent)]
 pub struct Named<N: ShadowTrait>(pub N::Target);
 
+impl<N: ShadowTrait> Named<N> {
+    pub fn new(value: N::Target) -> Self
+        where N::Target: Sized,
+    {
+        Self(value)
+    }
+}
+
 unsafe impl<N: ShadowTrait> bytemuck::TransparentWrapper<N::Target>
     for Named<N>
 {
 }
 
+// impl Copy only, leave the possibility of named-impl Clone for `T: Clone + !Copy`
 impl<N> Clone for Named<N>
 where
     N: ShadowTrait,
     N::Target: Copy,
 {
     fn clone(&self) -> Self {
-        Named(self.0)
+        Self(self.0)
     }
 }
 
@@ -38,6 +47,7 @@ where
 pub mod wrap;
 pub mod wrap_one_tag_multiple_types;
 
+//pub mod clone;
 pub mod display;
 pub mod debug;
 

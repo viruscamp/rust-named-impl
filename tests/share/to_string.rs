@@ -33,17 +33,21 @@ where
 //impl<NP: ToStringProvider, const IMPL_DEREF: bool> ToString for Wrap<NP, IMPL_DEREF>{}
 
 pub struct ToStringSelector<N>(PhantomData<N>)
-where N: ShadowTrait, Named<N>: ToString;
+    where N: ShadowTrait, Named<N>: ToString;
 impl<N> ShadowTrait for ToStringSelector<N>
-where N: ShadowTrait, Named<N>: ToString
+    where N: ShadowTrait, Named<N>: ToString
 {
     type Target = N::Target;
 }
 // Because we cannot write `impl<N> ToString for Wrap<N>`
 impl<N> ToString for Wrap<ToStringSelector<N>>
-where N: ShadowTrait, Named<N>: ToString
+    where N: ShadowTrait, Named<N>: ToString
 {
     fn to_string(&self) -> String {
+        // if we omit `::<N>` here like:
+        // `Named::to_string(Named::<N>::wrap_ref(&self.0))`
+        // it may cause error like 
+        // overflow evaluating the requirement `named_impl::Named<MyInnerTypeWrapTag<_>>: std::fmt::Display`
         Named::<N>::to_string(Named::<N>::wrap_ref(&self.0))
     }
 }
