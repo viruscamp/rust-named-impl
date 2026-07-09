@@ -8,7 +8,7 @@ impl ShadowTrait for WrapI32Tag {
     type Target = i32;
 }
 /// For this type, I donot want it to be a transparent wrapper, 
-/// so Deref is disabled with ImplDeref=false
+/// so Deref is disabled with IMPL_DEREF=false
 type WrapI32 = Wrap<WrapI32Tag, false>;
 
 // impl trait directly

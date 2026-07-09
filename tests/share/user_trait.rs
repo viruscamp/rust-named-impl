@@ -24,7 +24,7 @@ where
     type Impl = Self;
 }
 
-impl<NP, const ImplDeref: bool> UserSuper for Wrap<NP, ImplDeref>
+impl<NP, const IMPL_DEREF: bool> UserSuper for Wrap<NP, IMPL_DEREF>
 where
     NP: UserSuperProvider,
     Named<NP::Impl>: UserSuper,
@@ -78,7 +78,7 @@ where
     type Impl = Self;
 }
 
-impl<NP, const ImplDeref: bool> UserTrait for Wrap<NP, ImplDeref>
+impl<NP, const IMPL_DEREF: bool> UserTrait for Wrap<NP, IMPL_DEREF>
 where
     Self: UserSuper,
     NP: UserTraitProvider,

@@ -30,7 +30,7 @@ where
 }
 
 // failed
-//impl<NP: ToStringProvider, const ImplDeref: bool> ToString for Wrap<NP, ImplDeref>{}
+//impl<NP: ToStringProvider, const IMPL_DEREF: bool> ToString for Wrap<NP, IMPL_DEREF>{}
 
 pub struct ToStringSelector<N>(PhantomData<N>)
 where N: ShadowTrait, Named<N>: ToString;

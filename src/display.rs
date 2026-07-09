@@ -20,7 +20,7 @@ where
     type Impl = Self;
 }
 
-impl<NP, const ImplDeref: bool> Display for Wrap<NP, ImplDeref>
+impl<NP, const IMPL_DEREF: bool> Display for Wrap<NP, IMPL_DEREF>
 where
     NP: DisplayProvider,
     Named<NP::Impl>: Display,

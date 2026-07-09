@@ -11,9 +11,9 @@ use crate::ShadowTrait;
 // newtype wrapper
 #[fundamental]
 #[repr(transparent)]
-pub struct Wrap<NamedImpl: ShadowTrait, const ImplDeref: bool = true>(pub NamedImpl::Target);
+pub struct Wrap<NamedImpl: ShadowTrait, const IMPL_DEREF: bool = true>(pub NamedImpl::Target);
 
-impl<NamedImpl, const ImplDeref: bool> Clone for Wrap<NamedImpl, ImplDeref>
+impl<NamedImpl, const IMPL_DEREF: bool> Clone for Wrap<NamedImpl, IMPL_DEREF>
 where
     NamedImpl: ShadowTrait,
     NamedImpl::Target: Copy,
@@ -23,14 +23,14 @@ where
     }
 }
 
-impl<NamedImpl, const ImplDeref: bool> Copy for Wrap<NamedImpl, ImplDeref>
+impl<NamedImpl, const IMPL_DEREF: bool> Copy for Wrap<NamedImpl, IMPL_DEREF>
 where
     NamedImpl: ShadowTrait,
     NamedImpl::Target: Copy,
 {
 }
 
-impl<NamedImpl: ShadowTrait, const ImplDeref: bool> Wrap<NamedImpl, ImplDeref> {
+impl<NamedImpl: ShadowTrait, const IMPL_DEREF: bool> Wrap<NamedImpl, IMPL_DEREF> {
     pub fn new(value: NamedImpl::Target) -> Self
         where NamedImpl::Target: Sized,
     {
@@ -52,8 +52,8 @@ impl<NamedImpl: ShadowTrait, const ImplDeref: bool> Wrap<NamedImpl, ImplDeref> {
     }
 }
 
-unsafe impl<NamedImpl: ShadowTrait, const ImplDeref: bool> TransparentWrapper<NamedImpl::Target>
-    for Wrap<NamedImpl, ImplDeref>
+unsafe impl<NamedImpl: ShadowTrait, const IMPL_DEREF: bool> TransparentWrapper<NamedImpl::Target>
+    for Wrap<NamedImpl, IMPL_DEREF>
 {
 }
 

@@ -20,7 +20,7 @@ where
     type Impl = Self;
 }
 
-impl<NP, const ImplDeref: bool> Debug for Wrap<NP, ImplDeref>
+impl<NP, const IMPL_DEREF: bool> Debug for Wrap<NP, IMPL_DEREF>
 where
     NP: DebugProvider,
     Named<NP::Impl>: Debug,

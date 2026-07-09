@@ -10,7 +10,6 @@ use bytemuck::TransparentWrapper;
 /// for example when implementing named serialization traits.  
 /// However, it lacks the ability to impl external trait on Wrap of local Tag.  
 /// As `#[fundamental]` on `Wrap<T, N>` with more than one generic paraments is invalid.  
-#[fundamental]
 #[repr(transparent)]
 pub struct WrapOneTagMultipleTypes<T: ?Sized, NP>(PhantomData<NP>, pub T);
 
